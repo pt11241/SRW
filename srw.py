@@ -38,7 +38,7 @@ class Quadratic_Irrationals:
         return res_q
 
     @staticmethod
-    def med(array: np.array) -> np.array:
+    def averaging(array: np.array) -> np.array:
         size = array.size
         result = []
         for D in range(1, size+1):  
@@ -58,7 +58,7 @@ def main():
     lens = np.array([Quadratic_Irrationals(p0, Q0, i).period() for i in D])
 
     # x_D = Quadratic_Irrationals.med(D)
-    Lmed = Quadratic_Irrationals.med(lens)
+    Lmed = Quadratic_Irrationals.averaging(lens)
     print(lens[:10])
     print("AAAAAAAAAAAAAAa")
     print(Lmed[:10])
