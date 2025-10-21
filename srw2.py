@@ -1,6 +1,7 @@
 from gmpy2 import mpz, mpq, mpfr, isqrt, sqrt
 import math
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Quadratic_Irrationals:
     def __init__(self, p, Q, D):
@@ -40,13 +41,15 @@ class Quadratic_Irrationals:
         return res_q
 
     @staticmethod
-    def averaging(array: np.array) -> np.array:
+    def averaging(array):
         size = array.size
-        result = []
-        for D in range(1, size+1):  
-            numerator = np.nansum(array[1:D])  
-            denominator = D - np.sqrt(D)
-            result.append(numerator / denominator)
+        total = 0
+        result = [0]
+        for D in range(2, size+1):
+            total += mpz(array[D-1])
+            denominator = D - math.sqrt(D)
+            result.append(total / denominator)
+        
         return np.array(result)
 
 
@@ -95,13 +98,37 @@ class PellsEquations:
 
 
 def main():
-    k = Quadratic_Irrationals(0, 1, 425)
+    # k = Quadratic_Irrationals(0, 1, 425)
     
-    equation = PellsEquations(k)
-    print(equation.fundamentalSolution())
-    print(equation.jSolution(3))
+    # equation = PellsEquations(k)
+    # print(equation.fundamentalSolution())
+    # print(equation.jSolution(3))
+    p,Q = 0, 1
 
+    D = np.arange(1, 10000000)
+    indx = np.sqrt(D) % 1 != 0
+    D = D[indx]
+    lens = np.array([Quadratic_Irrationals(p, Q, i).period() for i in D])
+    Lmed = Quadratic_Irrationals.averaging(lens)
 
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+
+    ax1.plot(D, Lmed, color='b', alpha=1, label='Усреднённые значения', linewidth=3)
+    ax1.set_title('Усреднённые значения L(D)')
+    ax1.set_xlabel('D')
+    ax1.set_ylabel('L(D)')
+    ax1.grid()
+    ax1.legend()
+
+    ax2.plot(D, lens, 'o', color='g', alpha=0.5, label='Периоды')
+    ax2.set_title('Длины периодов')
+    ax2.set_xlabel('D')
+    ax2.set_ylabel('L(D)')
+    ax2.grid()
+    ax2.legend()
+
+    plt.tight_layout()
+    plt.show()
 
 if __name__ == '__main__':
     main()
