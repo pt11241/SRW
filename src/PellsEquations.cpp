@@ -81,7 +81,7 @@ std::pair<long long, long long> PellsEquations::FundSolNonForm(){
         return {};
     }
     
-    for (; y < boundsY; y++){
+    for (; y <= boundsY; y++){
         long long x2 = alpha.GetD() * y * y + _n;
         if (isPerfectSquare(x2)){
             long long x = std::sqrt(x2);
@@ -89,6 +89,8 @@ std::pair<long long, long long> PellsEquations::FundSolNonForm(){
                 return {x, y};
         }
     }
+    std::cout << "There are no integer solutions to the equation" << '\n';
+    
     return {};
 }
 

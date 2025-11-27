@@ -17,5 +17,13 @@ int main(){
     std::cout << sol2.first << ' ' << sol2.second << '\n';
     std::cout << jsol2.first << ' ' << jsol2.second << '\n';
 
+    int D3 = 3, n3 = 13;
+    PellsEquations equation3(D3, n3);
+    std::pair<long long, long long> sol3 = equation3.FundSolNonForm();
+    std::pair<long long, long long> jsol3 = equation3.jSolNonForm(1);
+    std::cout << sol3.first << ' ' << sol3.second << '\n';
+    std::cout << jsol3.first << ' ' << jsol3.second << '\n';
+    
+
     return 0;
 }
