@@ -3,7 +3,7 @@
 
 
 int main(){
-    int D1 = 425, n1 = 1;
+    int D1 = 425, n1 = -1;
     PellsEquations equation1(D1, n1); 
     std::pair<long long, long long> sol1 = equation1.FundamentalSolutions();
     std::pair<long long, long long> jsol1 = equation1.jSolutions(2);

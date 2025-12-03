@@ -31,3 +31,5 @@ public:
                            std::vector<mpq_class> &c, 
                            size_t maxD, int p, int Q);
 };
+
+bool isPerfectSquare(long long n);

@@ -63,8 +63,9 @@ int QuadraticIrrationals::period_right() {
 
 
 mpz_class QuadraticIrrationals::periodD(){ // здесь всегда будет выполняться условие Q | D - P^2
-    if(!(p == 0 && Q == 1))
+    if(!(p == 0 && Q == 1)){
         throw "p must be 0, Q must be 1 ";
+    }
     long long pi = p;
     long long Qi = Q;
     long long sqrtD = isqrt(D);
