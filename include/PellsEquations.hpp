@@ -6,19 +6,18 @@
 class PellsEquations{
 private:
     QuadraticIrrationals alpha;
-    std::optional<std::pair<long long, long long>> FundSolutions;
-    int _n;
-    bool isPerfectSquare(long long n) {
-        if (n < 0) return false; 
-        long long root = static_cast<long long>(std::sqrt(n));
-        return root * root == n;
+    std::optional<std::pair<mpz_class, mpz_class>> FundSolutions;
+    long long _n;
+    bool isPerfectSquare(const mpz_class& n) {
+        return mpz_perfect_square_p(n.get_mpz_t()) != 0;
     }
+
 public:
-    PellsEquations(int D, int n);
+    PellsEquations(long long D, long long n);
 
-    std::pair<long long, long long> FundamentalSolutions();
-    std::pair<long long, long long> jSolutions(long long j);
+    std::pair<mpz_class, mpz_class> FundamentalSolutions();
+    std::pair<mpz_class, mpz_class> jSolutions(long long j);
 
-    std::pair<long long, long long> FundSolNonForm();
-    std::pair<long long, long long> jSolNonForm(int j);
+    std::pair<mpz_class, mpz_class> FundSolNonForm();
+    std::pair<mpz_class, mpz_class> jSolNonForm(int j);
 };

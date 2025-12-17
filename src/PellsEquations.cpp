@@ -1,26 +1,30 @@
 #include "../include/PellsEquations.hpp"
 #include <iostream>
+#include <gmpxx.h>
 
 
 
-int nod(int a1, int b1){
-    int a = a1, b = b1;
-    while(b != 0){
-        int bcopy = b;
-        b = a % b;
-        a = bcopy;
-    }
-    return a;
+mpz_class nod(const mpz_class& a1, const mpz_class& b1) {
+    mpz_class g;
+    mpz_gcd(g.get_mpz_t(), a1.get_mpz_t(), b1.get_mpz_t());
+    return g;
+}
+
+
+mpf_class pow_mpf(const mpf_class& base, unsigned long exp){
+    mpf_class result;
+    mpf_pow_ui(result.get_mpf_t(), base.get_mpf_t(), exp);
+    return result;
 }
 
 
 
-PellsEquations::PellsEquations(int D, int n) : alpha(0, 1, D), _n(n){}
+PellsEquations::PellsEquations(long long D, long long n) : alpha(0, 1, D), _n(n){}
 
-std::pair<long long, long long> PellsEquations::FundamentalSolutions(){ // fund solution of x^2 - D*y^2 = +-1
+std::pair<mpz_class, mpz_class> PellsEquations::FundamentalSolutions(){ // fund solution of x^2 - D*y^2 = +-1
     if(FundSolutions)                                   
         return {FundSolutions->first, FundSolutions->second};
-    int n = _n;
+    long long n = _n;
     if(!(_n == 1 || _n == -1)){
         n = 1;
     }
@@ -40,12 +44,17 @@ std::pair<long long, long long> PellsEquations::FundamentalSolutions(){ // fund 
             pqf = alpha.periodic_continued_fraction(period);
         }
     }
-    long long a_2 = 0, a_1 = 1;
-    long long b_2 = 1, b_1 = 0;
+    std::cout << "here 1" << '\n';
+    std::cout << period << '\n';
+    long count = 0;
+    mpz_class a_2 = 0, a_1 = 1;
+    mpz_class b_2 = 1, b_1 = 0;
     for(auto q : pqf){
-        long long q_mpz = q;
-        long long new_a_1 = q_mpz * a_1 + a_2;
-        long long new_b_1 = q_mpz * b_1 + b_2;
+        count++;
+        std::cout << period << '\n';
+        mpz_class q_mpz(static_cast<unsigned long>(q));
+        mpz_class new_a_1 = q_mpz * a_1 + a_2;
+        mpz_class new_b_1 = q_mpz * b_1 + b_2;
         a_2 = a_1;
         a_1 = new_a_1;
         b_2 = b_1;
@@ -55,50 +64,55 @@ std::pair<long long, long long> PellsEquations::FundamentalSolutions(){ // fund 
     return {a_1, b_1};
 }
 
-std::pair<long long, long long> PellsEquations::jSolutions(long long j){
-    std::pair<long long, long long> fundsol = FundamentalSolutions();
-    long long x1 = fundsol.first, y1 = fundsol.second; 
-    
-    long double base = x1 + y1 * std::sqrt((long double)alpha.GetD());
-    long double base_conj= x1 - y1 * std::sqrt((long double)alpha.GetD());
-    long double x = (std::pow(base, j) + std::pow(base_conj, j)) / 2.0;
-    long double y = (std::pow(base, j) - std::pow(base_conj, j)) / (2.0 * std::sqrt((long double)alpha.GetD()));
-    return {x, y};
+std::pair<mpz_class, mpz_class> PellsEquations::jSolutions(long long j){
+    auto [x1, y1] = FundamentalSolutions();
+    mpf_class sqrtD(alpha.GetD(), 256); // high precision sqrt
+    mpf_class base = mpf_class(x1) + mpf_class(y1) * sqrtD;
+    mpf_class base_conj = mpf_class(x1) - mpf_class(y1) * sqrtD;
+
+    mpf_class base_pow   = pow_mpf(base, j);
+    mpf_class base_conj_pow = pow_mpf(base_conj, j);
+
+    mpf_class x = (base_pow + base_conj_pow) / 2;
+    mpf_class y = (base_pow - base_conj_pow) / (2 * sqrtD);
+
+
+    return {mpz_class(x), mpz_class(y)};
 }
 
-std::pair<long long, long long> PellsEquations::FundSolNonForm(){
-    std::pair<long long, long long> FundSol = FundamentalSolutions();
-    long long boundsY = 0;
-    long long y = 0;
+std::pair<mpz_class, mpz_class> PellsEquations::FundSolNonForm(){
+    auto [xFund, yFund] = FundamentalSolutions();
+    mpz_class boundsY, y;
     if (_n > 1){
-        boundsY = std::ceil((FundSol.second * std::sqrt(_n)) / std::sqrt(2 * FundSol.first));
+        mpf_class boundCalc = mpf_class(yFund) * sqrt(_n) / sqrt(2 * xFund);
+        boundsY = ceil(boundCalc);
         y = 0;
     }else if(_n < -1){
-        boundsY = std::ceil((FundSol.second * std::sqrt(std::abs(_n))) / std::sqrt(2 * (FundSol.first - 1)));
+        mpf_class boundCalc = mpf_class(yFund) * sqrt(std::abs(_n)) / sqrt(2 * (xFund - 1));
+        boundsY = ceil(boundCalc);
         y = 1;
     }else{
-        std::cout << "_n must be > 1 or < -1" << '\n';
+        std::cout << "_n must be > 1 or < -1\n";
         return {};
     }
     
     for (; y <= boundsY; y++){
-        long long x2 = alpha.GetD() * y * y + _n;
-        if (isPerfectSquare(x2)){
-            long long x = std::sqrt(x2);
+        mpz_class x2 = alpha.GetD() * y * y + mpz_class(static_cast<int>(_n));
+        if (isPerfectSquare(x2)){ // нужно переписать isPerfectSquare под mpz_class
+            mpz_class x;
+            mpz_sqrt(x.get_mpz_t(), x2.get_mpz_t());
             if (nod(x, y) == 1)
                 return {x, y};
         }
     }
-    std::cout << "There are no integer solutions to the equation" << '\n';
-    
+    std::cout << "No integer solutions\n";
     return {};
 }
 
-std::pair<long long, long long> PellsEquations::jSolNonForm(int j){
-    std::pair<long long, long long> fundSolNF = FundSolNonForm();
-    std::pair<long long, long long> jSolutionPells = jSolutions(j);
-    
-    long long x1 = fundSolNF.first, y1 = fundSolNF.second;
-    long long u = jSolutionPells.first, v = jSolutionPells.second;
-    return {u * x1 + v * y1 * alpha.GetD(), u * y1 + v * x1};
+std::pair<mpz_class, mpz_class> PellsEquations::jSolNonForm(int j){
+    auto [x1, y1] = FundSolNonForm();
+    auto [u, v] = jSolutions(j);
+    mpz_class X = u * x1 + v * y1 * alpha.GetD();
+    mpz_class Y = u * y1 + v * x1;
+    return {X, Y};
 }

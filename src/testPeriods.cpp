@@ -11,7 +11,7 @@
 int main(){
     const auto start{std::chrono::steady_clock::now()};
     int p = 0, Q = 1;
-    size_t max_D = 100000;
+    size_t max_D = 1000000;
     bool flag = 1;
     
 
@@ -28,7 +28,7 @@ int main(){
         }  
     }
 
-    QuadraticIrrationals::periods_and_averaging(nps_numbers, periods_right2, avg_periods2, max_D, p, Q);
+    // QuadraticIrrationals::periods_and_averaging(nps_numbers, periods_right2, avg_periods2, max_D, p, Q);
     size_t size = nps_numbers.size();
     std::vector<int> is_prime_nps(size);
 

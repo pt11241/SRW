@@ -29,11 +29,13 @@ def main():
     plt.ylabel('Количество')
     plt.grid(True)
 
-    plt.scatter(arr[:, 1], arr[:, 0], label="4k", s=10)
-    plt.scatter(arr1[:, 1], arr1[:, 0], label="4k+1", s=10)
-    plt.scatter(arr2[:, 1], arr2[:, 0], label="4k+2", s=10)
-    plt.scatter(arr3[:, 1], arr3[:, 0], label="4k+3", s=10)
+    plt.scatter(arr[:, 1], arr[:, 0], label="4k", s=10, alpha=1)
+    plt.scatter(arr1[:, 1], arr1[:, 0], label="4k+1", s=10, alpha=1)
+    plt.scatter(arr2[:, 1], arr2[:, 0], label="4k+2", s=10, alpha=1)
+    plt.scatter(arr3[:, 1], arr3[:, 0], label="4k+3", s=10, alpha=1)
 
+    # plt.yscale("log")
+    plt.xscale("log")
     # plt.xlim(left=-100)
     # plt.ylim(bottom=-100)
 
