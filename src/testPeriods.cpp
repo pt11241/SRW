@@ -9,10 +9,12 @@
 
 
 int main(){
-    const auto start{std::chrono::steady_clock::now()};
     int p = 0, Q = 1;
     size_t max_D = 1000000;
+    std::cout << "Dmax = ";
+    std::cin >> max_D; 
     bool flag = 1;
+    const auto start{std::chrono::steady_clock::now()};
     
 
     std::vector<long long> nps_numbers;

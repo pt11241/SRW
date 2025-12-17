@@ -44,14 +44,14 @@ std::pair<mpz_class, mpz_class> PellsEquations::FundamentalSolutions(){ // fund 
             pqf = alpha.periodic_continued_fraction(period);
         }
     }
-    std::cout << "here 1" << '\n';
-    std::cout << period << '\n';
+    // std::cout << "here 1" << '\n';
+    // std::cout << period << '\n';
     long count = 0;
     mpz_class a_2 = 0, a_1 = 1;
     mpz_class b_2 = 1, b_1 = 0;
     for(auto q : pqf){
         count++;
-        std::cout << period << '\n';
+        // std::cout << period << '\n';
         mpz_class q_mpz(static_cast<unsigned long>(q));
         mpz_class new_a_1 = q_mpz * a_1 + a_2;
         mpz_class new_b_1 = q_mpz * b_1 + b_2;
